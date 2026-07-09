@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Showroom Viewer - Code & Content Showcase</title>
+    <link rel="stylesheet" href="viewer.css">
+    <!-- Highlight.js for syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+</head>
+<body>
+    <div id="showroom-viewer" data-showroom-viewer></div>
+
+    <script src="viewer.js"></script>
+    <script>
+        // Initialize the viewer
+        document.addEventListener('DOMContentLoaded', async () => {
+            const viewer = new ShowroomViewer({
+                containerSelector: '#showroom-viewer',
+                theme: 'dark',
+                highlightCode: true,
+                enableSearch: true,
+                enablePreview: true,
+                maxFileSize: 5242880
+            });
+
+            // Example: Load a sample file
+            const sampleCode = `// Showroom Viewer - Sample Code
+class Calculator {
+    constructor(initialValue = 0) {
+        this.value = initialValue;
+    }
+
+    add(num) {
+        this.value += num;
+        return this;
+    }
+
+    subtract(num) {
+        this.value -= num;
+        return this;
+    }
+
+    multiply(num) {
+        this.value *= num;
+        return this;
+    }
+
+    divide(num) {
+        if (num === 0) {
+            throw new Error('Cannot divide by zero');
+        }
+        this.value /= num;
+        return this;
+    }
+
+    clear() {
+        this.value = 0;
+        return this;
+    }
+
+    getResult() {
+        return this.value;
+    }
+}
+
+// Usage example
+const calc = new Calculator(10);
+calc.add(5)
+    .multiply(2)
+    .subtract(10)
+    .divide(2);
+
+console.log('Result:', calc.getResult()); // Output: 5`;
+
+            await viewer.loadFile(sampleCode, {
+                fileName: 'calculator.js',
+                language: 'javascript'
+            });
+
+            // Optional: Add file input to load custom files
+            setupFileUpload(viewer);
+        });
+
+        function setupFileUpload(viewer) {
+            // Create a file input element (hidden)
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.id = 'file-upload';
+            fileInput.style.display = 'none';
+            document.body.appendChild(fileInput);
+
+            // Listen for file selection
+            fileInput.addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    try {
+                        await viewer.loadFile(file);
+                    } catch (error) {
+                        console.error('Error loading file:', error);
+                    }
+                }
+            });
+
+            // Keyboard shortcut: Ctrl+O to open file
+            document.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'o') {
+                    e.preventDefault();
+                    fileInput.click();
+                }
+            });
+
+            console.log('Press Ctrl+O (or Cmd+O on Mac) to open a file');
+        }
+    </script>
+</body>
+</html>
