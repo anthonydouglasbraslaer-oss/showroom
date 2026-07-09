@@ -47,12 +47,22 @@ class Viewer3D {
         this.camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
         this.camera.position.set(2, 2, 4);
 
-        // Renderer
-        this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        // Renderer - Melhorias de qualidade
+        this.renderer = new THREE.WebGLRenderer({ 
+            antialias: true, 
+            alpha: true,
+            precision: 'highp',
+            powerPreference: 'high-performance'
+        });
         this.renderer.setSize(width, height);
-        this.renderer.setPixelRatio(window.devicePixelRatio);
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        this.renderer.outputColorSpace = THREE.SRGBColorSpace;
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.PCFShadowShadowMap;
+        this.renderer.shadowMap.resolution = 1024;
+        this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        this.renderer.toneMappingExposure = 1;
+        
         container.appendChild(this.renderer.domElement);
 
         // Lights
@@ -72,30 +82,36 @@ class Viewer3D {
     }
 
     /**
-     * Configurar iluminação
+     * Configurar iluminação profissional
      */
     setupLights() {
-        // Luz ambiente
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+        // Luz ambiente neutra
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
         this.scene.add(ambientLight);
 
-        // Luz direcional
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-        directionalLight.position.set(5, 10, 7);
-        directionalLight.castShadow = true;
-        directionalLight.shadow.mapSize.width = 2048;
-        directionalLight.shadow.mapSize.height = 2048;
-        directionalLight.shadow.camera.far = 50;
-        directionalLight.shadow.camera.left = -20;
-        directionalLight.shadow.camera.right = 20;
-        directionalLight.shadow.camera.top = 20;
-        directionalLight.shadow.camera.bottom = -20;
-        this.scene.add(directionalLight);
+        // Luz direcional principal (suave)
+        const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight1.position.set(8, 12, 8);
+        directionalLight1.castShadow = true;
+        directionalLight1.shadow.mapSize.width = 1024;
+        directionalLight1.shadow.mapSize.height = 1024;
+        directionalLight1.shadow.camera.far = 50;
+        directionalLight1.shadow.camera.left = -25;
+        directionalLight1.shadow.camera.right = 25;
+        directionalLight1.shadow.camera.top = 25;
+        directionalLight1.shadow.camera.bottom = -25;
+        directionalLight1.shadow.bias = -0.001;
+        this.scene.add(directionalLight1);
 
-        // Luz de preenchimento
-        const fillLight = new THREE.DirectionalLight(0xffffff, 0.3);
-        fillLight.position.set(-5, 3, -5);
-        this.scene.add(fillLight);
+        // Luz preenchimento frontal
+        const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.5);
+        directionalLight2.position.set(-8, 5, -8);
+        this.scene.add(directionalLight2);
+
+        // Luz de fundo sutil
+        const directionalLight3 = new THREE.DirectionalLight(0xffffff, 0.3);
+        directionalLight3.position.set(0, -5, -10);
+        this.scene.add(directionalLight3);
     }
 
     /**
@@ -110,6 +126,7 @@ class Viewer3D {
         this.controls.autoRotateSpeed = 4;
         this.controls.minDistance = 1;
         this.controls.maxDistance = 20;
+        this.controls.enablePan = true;
     }
 
     /**
@@ -146,15 +163,32 @@ class Viewer3D {
                             );
                         }
 
-                        // Processar materiais e sombras
+                        // Processar materiais e texturas
                         this.model.traverse((node) => {
                             if (node.isMesh) {
                                 node.castShadow = true;
                                 node.receiveShadow = true;
+                                node.frustumCulled = false;
                                 
                                 // Melhorar material
                                 if (node.material) {
+                                    node.material.side = THREE.FrontSide;
+                                    
+                                    // Ativar mapeamento de tonalidade
+                                    if (node.material.map) {
+                                        node.material.map.colorSpace = THREE.SRGBColorSpace;
+                                    }
+
+                                    // Ajustar normal map se existir
+                                    if (node.material.normalMap) {
+                                        node.material.normalScale.set(0.8, 0.8);
+                                    }
+
+                                    // Renderizar ambos os lados se necessário
                                     node.material.side = THREE.DoubleSide;
+                                    
+                                    // Melhorar qualidade do material
+                                    node.material.precision = 'highp';
                                 }
                             }
                         });
@@ -212,6 +246,7 @@ class Viewer3D {
         this.camera.position.z = cameraZ;
         this.camera.lookAt(this.model.position);
         this.controls.target.copy(box.getCenter(new THREE.Vector3()));
+        this.controls.update();
     }
 
     /**
@@ -237,6 +272,7 @@ class Viewer3D {
      */
     zoomIn() {
         this.camera.position.multiplyScalar(0.9);
+        this.controls.update();
     }
 
     /**
@@ -244,6 +280,7 @@ class Viewer3D {
      */
     zoomOut() {
         this.camera.position.multiplyScalar(1.1);
+        this.controls.update();
     }
 
     /**
