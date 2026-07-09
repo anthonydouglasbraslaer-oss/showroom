@@ -167,11 +167,11 @@ class Viewer3D {
             color: this.config.floorColor
         });
 
-        // Criar piso grande (infinito) - posicionado abaixo
+        // Criar piso grande (infinito) - posicionado no nível Y = 0
         const floorGeometry = new THREE.PlaneGeometry(200, 200);
         const floor = new THREE.Mesh(floorGeometry, floorMaterial);
         floor.rotation.x = -Math.PI / 2;
-        floor.position.y = -5; // Piso bem embaixo para não cortar a máquina
+        floor.position.y = 0;
         floor.receiveShadow = true;
         floor.castShadow = false;
 
@@ -186,7 +186,7 @@ class Viewer3D {
      */
     addGridHelper() {
         const gridHelper = new THREE.GridHelper(100, 20, 0xcccccc, 0xeeeeee);
-        gridHelper.position.y = -4.95; // Mesma altura do piso
+        gridHelper.position.y = 0.05;
         gridHelper.material.transparent = true;
         gridHelper.material.opacity = 0.3;
         this.scene.add(gridHelper);
@@ -239,6 +239,11 @@ class Viewer3D {
                                 options.rotation.y || 0,
                                 options.rotation.z || 0
                             );
+                        }
+
+                        // Aplicar posição Y (para pousar no piso)
+                        if (options.positionY !== undefined) {
+                            this.model.position.y = options.positionY;
                         }
 
                         // Processar materiais e texturas
