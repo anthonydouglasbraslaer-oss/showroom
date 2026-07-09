@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>Braslaer | Máquina</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="../css/machine.css">
+
+</head>
+
+<body>
+
+<header class="machine-header">
+
+    <a href="../index.html" class="back-button">
+
+        ← Voltar ao Showroom
+
+    </a>
+
+    <img
+
+        src="../assets/interface/logo.png"
+
+        class="logo"
+
+        alt="Braslaer">
+
+</header>
+
+<main class="machine-page">
+
+<!-- =======================================================
+     VISUALIZADOR
+======================================================== -->
+
+<section class="viewer-section">
+
+    <div class="viewer-wrapper">
+
+    <div id="viewer3D" class="viewer3D"></div>
+
+    <div id="viewerLoader" class="viewer-loader">
+
+        <div class="loader-spinner"></div>
+
+        <span>Carregando modelo...</span>
+
+    </div>
+
+    <div class="viewer-toolbar">
+
+        <button id="resetCamera" title="Resetar câmera">
+
+            ⟳
+
+        </button>
+
+        <button id="toggleRotate" title="Auto rotação">
+
+            ⭮
+
+        </button>
+
+        <button id="zoomIn" title="Aproximar">
+
+            ＋
+
+        </button>
+
+        <button id="zoomOut" title="Afastar">
+
+            －
+
+        </button>
+
+        <button id="fullscreenViewer" title="Tela cheia">
+
+            ⛶
+
+        </button>
+
+    </div>
+
+</div>
+
+    </div>
+
+</section>
+
+<!-- =======================================================
+     INFORMAÇÕES
+======================================================== -->
+
+<section class="info-section">
+
+    <span
+        id="machineCategory"
+        class="category">
+
+    </span>
+
+    <h1
+        id="machineName">
+
+    </h1>
+
+    <p
+        id="machineDescription">
+
+    </p>
+
+    <div class="actions">
+
+        <button id="budgetButton">
+
+            Solicitar orçamento
+
+        </button>
+
+        <button id="catalogButton">
+
+            Baixar catálogo
+
+        </button>
+
+    </div>
+
+</section>
+
+<!-- =======================================================
+     ESPECIFICAÇÕES
+======================================================== -->
+
+<section class="specs">
+
+    <h2>
+
+        Especificações Técnicas
+
+    </h2>
+
+    <div class="spec-grid">
+
+        <div class="spec">
+
+            <span>Produção</span>
+
+            <strong id="machineProduction"></strong>
+
+        </div>
+
+        <div class="spec">
+
+            <span>Peso</span>
+
+            <strong id="machineWeight"></strong>
+
+        </div>
+
+        <div class="spec">
+
+            <span>Motor</span>
+
+            <strong id="machineMotor"></strong>
+
+        </div>
+
+        <div class="spec">
+
+            <span>Voltagem</span>
+
+            <strong id="machineVoltage"></strong>
+
+        </div>
+
+        <div class="spec">
+
+            <span>Dimensões</span>
+
+            <strong id="machineDimensions"></strong>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- =======================================================
+     BENEFÍCIOS
+======================================================== -->
+
+<section class="benefits">
+
+    <h2>
+
+        Benefícios
+
+    </h2>
+
+    <ul id="machineBenefits">
+
+    </ul>
+
+</section>
+
+<!-- =======================================================
+     GALERIA
+======================================================== -->
+
+<section class="gallery">
+
+    <h2>
+
+        Galeria
+
+    </h2>
+
+    <div
+        id="galleryGrid"
+        class="gallery-grid">
+
+    </div>
+
+</section>
+
+</main>
+
+<!-- Three.js CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<!-- Three.js GLTFLoader -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+
+<!-- Three.js OrbitControls -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+<!-- Scripts do projeto -->
+<script src="../js/machines.js"></script>
+<script src="../js/viewer.js"></script>
+<script src="../js/machine.js"></script>
+
+</body>
+</html>
