@@ -84,7 +84,8 @@ function inicializarViewer3D(maquina) {
                 y: (maquina.rotacaoInicial || 0) * Math.PI / 180,
                 z: 0
             },
-            camera: maquina.camera
+            camera: maquina.camera,
+            positionY: maquina.posicaoY || 0
         }).catch(error => {
             console.error("Erro ao carregar modelo:", error);
             console.error("Caminho tentado:", modelPath);
