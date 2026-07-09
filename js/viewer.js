@@ -60,7 +60,7 @@ class Viewer3D {
         this.renderer.outputColorSpace = THREE.SRGBColorSpace;
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.PCFShadowShadowMap;
-        this.renderer.shadowMap.resolution = 1024;
+        this.renderer.shadowMap.resolution = 4096;
         this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
         this.renderer.toneMappingExposure = 1;
         
@@ -97,14 +97,15 @@ class Viewer3D {
         const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
         directionalLight1.position.set(8, 12, 8);
         directionalLight1.castShadow = true;
-        directionalLight1.shadow.mapSize.width = 1024;
-        directionalLight1.shadow.mapSize.height = 1024;
+        directionalLight1.shadow.mapSize.width = 4096;
+        directionalLight1.shadow.mapSize.height = 4096;
         directionalLight1.shadow.camera.far = 50;
-        directionalLight1.shadow.camera.left = -25;
-        directionalLight1.shadow.camera.right = 25;
-        directionalLight1.shadow.camera.top = 25;
-        directionalLight1.shadow.camera.bottom = -25;
-        directionalLight1.shadow.bias = -0.001;
+        directionalLight1.shadow.camera.left = -30;
+        directionalLight1.shadow.camera.right = 30;
+        directionalLight1.shadow.camera.top = 30;
+        directionalLight1.shadow.camera.bottom = -30;
+        directionalLight1.shadow.bias = -0.0005;
+        directionalLight1.shadow.normalBias = 0.05;
         this.scene.add(directionalLight1);
 
         // Luz preenchimento frontal
@@ -166,11 +167,11 @@ class Viewer3D {
             color: this.config.floorColor
         });
 
-        // Criar piso grande (infinito)
+        // Criar piso grande (infinito) - posicionado abaixo
         const floorGeometry = new THREE.PlaneGeometry(200, 200);
         const floor = new THREE.Mesh(floorGeometry, floorMaterial);
         floor.rotation.x = -Math.PI / 2;
-        floor.position.y = -0.1;
+        floor.position.y = -5; // Piso bem embaixo para não cortar a máquina
         floor.receiveShadow = true;
         floor.castShadow = false;
 
@@ -185,7 +186,7 @@ class Viewer3D {
      */
     addGridHelper() {
         const gridHelper = new THREE.GridHelper(100, 20, 0xcccccc, 0xeeeeee);
-        gridHelper.position.y = -0.05;
+        gridHelper.position.y = -4.95; // Mesma altura do piso
         gridHelper.material.transparent = true;
         gridHelper.material.opacity = 0.3;
         this.scene.add(gridHelper);
