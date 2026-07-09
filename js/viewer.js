@@ -12,6 +12,7 @@ class Viewer3D {
             backgroundColor: config.backgroundColor || 0xffffff,
             enableAutoRotate: config.enableAutoRotate !== false,
             cameraDistance: config.cameraDistance || 4,
+            floorColor: config.floorColor || 0xcccccc,
             ...config
         };
 
@@ -68,6 +69,9 @@ class Viewer3D {
         // Lights
         this.setupLights();
 
+        // Floor
+        this.createInfiniteFloor();
+
         // Controls
         this.setupControls();
 
@@ -112,6 +116,79 @@ class Viewer3D {
         const directionalLight3 = new THREE.DirectionalLight(0xffffff, 0.3);
         directionalLight3.position.set(0, -5, -10);
         this.scene.add(directionalLight3);
+    }
+
+    /**
+     * Criar piso infinito com reflexo
+     */
+    createInfiniteFloor() {
+        // Criar textura de grid para o piso
+        const canvas = document.createElement('canvas');
+        canvas.width = 256;
+        canvas.height = 256;
+        const ctx = canvas.getContext('2d');
+
+        // Fundo cinza claro
+        ctx.fillStyle = '#e0e0e0';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Grid lines
+        ctx.strokeStyle = '#b0b0b0';
+        ctx.lineWidth = 2;
+        const gridSize = 32;
+
+        for (let i = 0; i <= canvas.width; i += gridSize) {
+            ctx.beginPath();
+            ctx.moveTo(i, 0);
+            ctx.lineTo(i, canvas.height);
+            ctx.stroke();
+        }
+
+        for (let i = 0; i <= canvas.height; i += gridSize) {
+            ctx.beginPath();
+            ctx.moveTo(0, i);
+            ctx.lineTo(canvas.width, i);
+            ctx.stroke();
+        }
+
+        const texture = new THREE.CanvasTexture(canvas);
+        texture.repeat.set(4, 4);
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.colorSpace = THREE.SRGBColorSpace;
+
+        // Material do piso com reflexo sutil
+        const floorMaterial = new THREE.MeshStandardMaterial({
+            map: texture,
+            roughness: 0.6,
+            metalness: 0.1,
+            side: THREE.FrontSide,
+            color: this.config.floorColor
+        });
+
+        // Criar piso grande (infinito)
+        const floorGeometry = new THREE.PlaneGeometry(200, 200);
+        const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+        floor.rotation.x = -Math.PI / 2;
+        floor.position.y = -0.1;
+        floor.receiveShadow = true;
+        floor.castShadow = false;
+
+        this.scene.add(floor);
+
+        // Adicionar grade de referência visual sutil
+        this.addGridHelper();
+    }
+
+    /**
+     * Adicionar grade de referência (opcional)
+     */
+    addGridHelper() {
+        const gridHelper = new THREE.GridHelper(100, 20, 0xcccccc, 0xeeeeee);
+        gridHelper.position.y = -0.05;
+        gridHelper.material.transparent = true;
+        gridHelper.material.opacity = 0.3;
+        this.scene.add(gridHelper);
     }
 
     /**
