@@ -66,8 +66,18 @@ function inicializarViewer3D(maquina) {
             enableAutoRotate: true
         });
 
+        // Construir caminho correto (views está um nível acima)
+        let modelPath = maquina.modelo3d;
+        
+        // Se o caminho não começa com ../, adicionar ../
+        if (!modelPath.startsWith("../")) {
+            modelPath = "../" + modelPath;
+        }
+
+        console.log("Carregando modelo:", modelPath);
+
         // Carregar modelo 3D
-        viewer3D.loadModel(maquina.modelo3d, {
+        viewer3D.loadModel(modelPath, {
             scale: maquina.escala3d || 1,
             rotation: {
                 x: 0,
@@ -77,7 +87,8 @@ function inicializarViewer3D(maquina) {
             camera: maquina.camera
         }).catch(error => {
             console.error("Erro ao carregar modelo:", error);
-            mostrarErroViewer("Erro ao carregar o modelo 3D da máquina");
+            console.error("Caminho tentado:", modelPath);
+            mostrarErroViewer("Erro ao carregar o modelo 3D da máquina. Verifique o console para detalhes.");
         });
 
     } catch (error) {
